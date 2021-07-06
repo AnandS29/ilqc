@@ -9,7 +9,7 @@ from src.data.utils_data import QuadTargetCost, output_random_target
 
 
 def get_data(seed=0, horizon=10**3, ctrl_setting='two_links_arm', time_simulation=1, target_goal='quad_random_target',
-             dim_state=4, dim_ctrl=2, reg_speed=0.1, reg_ctrl=0.1):
+             dim_state=4, dim_ctrl=2, reg_speed=0.1, reg_ctrl=0.1, init_state=(1, 0)):
     """
     Simulate a robot from one of the implemented control settings.
     The discretized dynamics are implemented as a torch.nn.Module
@@ -30,7 +30,8 @@ def get_data(seed=0, horizon=10**3, ctrl_setting='two_links_arm', time_simulatio
         dim_state = 2
         dim_ctrl = 1
         initial_state = torch.ones(dim_state)
-        initial_state[1] = 0
+        initial_state[0] = init_state[0]
+        initial_state[1] = init_state[1]
         robot = InversePendulumDynamic(initial_state, time_simulation, horizon)
         if target_goal == 'quad_random_target':
             quad_cost = torch.tensor([[1, 0]

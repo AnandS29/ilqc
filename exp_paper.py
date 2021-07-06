@@ -18,10 +18,13 @@ parser.add_argument('--horizon', default=100, type=int,
                     help='Horizon of the discrete control problem')
 parser.add_argument('--target_goal', default='swing_up', type=str,
                     help='Cost on the final state of the trajectory')
+parser.add_argument('--initial_state', default=(1.0, 0.0), type=float, nargs='+',
+                    help='Initial state of the trajectory')
 args = parser.parse_args()
 
 data_cfg = dict(ctrl_setting=args.ctrl_setting, horizon=args.horizon, seed=0,
-                target_goal=args.target_goal, reg_ctrl=0.01)
+                target_goal=args.target_goal, reg_ctrl=0.01,
+                init_state=tuple(args.initial_state))
 
 # Grid search on algorithms for the step-sizes
 # see src.optim.build_optimizer for more information
