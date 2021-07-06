@@ -77,7 +77,7 @@ def var_to_str(var):
         var_str = '_'.join(var_str)
     elif inspect.isclass(var):
         raise NotImplementedError('Do not give as inputs in cfg inputs')
-    elif type(var) in [list, set, frozenset]:
+    elif type(var) in [list, set, frozenset, tuple]:
         value_list_str = [var_to_str(item) for item in var]
         var_str = '_'.join(value_list_str)
     elif isinstance(var, float):

@@ -1,7 +1,9 @@
 from exp_cfg import plots_folder
-from src.utils.plot import plot_exp
+from src.utils.plot import plot_exp, plot_trajs
 from src.pipeline.grid_search import grid_search, set_cfg
 from src.pipeline.exp_core import re_start_exp
+from src.data.get_data import get_data
+from simulate import simulate
 import matplotlib.pyplot as plt
 from pandas import DataFrame
 from copy import deepcopy
@@ -55,13 +57,18 @@ optim_cfgs.append(optim_cfg)
 
 stop_exp = dict(max_iter=20)
 
+trajs = {}
 # Run the experiments
+robot, _, _ = get_data(**data_cfg)
 total_info_exp = DataFrame()
 for optim_cfg in optim_cfgs:
-    _, info_exp, _ = re_start_exp(data_cfg, optim_cfg, stop_exp)
+    print("Running experiment for algo " + optim_cfg['algo'])
+    sol, info_exp, _ = re_start_exp(data_cfg, optim_cfg, stop_exp)
     info_exp['algo'] = [optim_cfg['algo']]*len(info_exp)
     total_info_exp = total_info_exp.append(
         deepcopy(info_exp), ignore_index=True)
+    trajs[optim_cfg['algo']] = deepcopy(simulate(robot,sol))
+    print()
 
 
 # Run a bit longer to find minimum value of the function
@@ -69,8 +76,11 @@ stop_exp_ref = dict(max_iter=int(stop_exp['max_iter']*1.5))
 
 min_func = math.inf
 for optim_cfg in optim_cfgs:
-    _, info_exp, _ = re_start_exp(data_cfg, optim_cfg, stop_exp_ref)
+    sol, info_exp, _ = re_start_exp(data_cfg, optim_cfg, stop_exp_ref)
     min_func = min(list(info_exp['func_val']) + [min_func])
+
+# Plot trajectories
+plot_trajs(trajs)
 
 # Normalize the plots and plot
 normalized_info_exp = deepcopy(total_info_exp)

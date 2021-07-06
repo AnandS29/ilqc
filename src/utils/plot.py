@@ -3,6 +3,7 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import seaborn as sns
+import numpy as np
 
 rc('font', **{'family': 'sans-serif',
               'sans-serif': ['Computer Modern Roman']})
@@ -60,6 +61,19 @@ def plot_exp(info_exp, x_axis, y_axis, hue='algo', log_scale=True, normalize=Tru
     fig = exp_plot.get_figure()
     return fig
 
+# TODO make animation/snapshots
+
+def plot_trajs(trajs):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.set_aspect('equal', adjustable='box')
+    for algo in trajs.keys():
+        dat = trajs[algo]
+        plt.plot(np.cos(dat[:, 0]), np.sin(dat[:, 0]), label=algo)
+    plt.legend()
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.show()
 
 def take_min_until_now(hue, info_exp, y_axis):
     for algo in list(info_exp[hue].unique()):
